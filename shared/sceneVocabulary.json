@@ -1,0 +1,12 @@
+{
+  "environments": ["desert", "town", "interior", "ruins", "cave", "road", "industrial", "water"],
+  "timesOfDay": ["dawn", "day", "dusk", "night"],
+  "weathers": ["clear", "dusty", "fog", "storm", "rad_storm"],
+  "moods": ["calm", "tense", "hostile", "mysterious", "hopeful"],
+  "landmarkTypes": [
+    "ruined_building", "intact_building", "mountain", "rock", "cactus", "dead_tree",
+    "power_line", "water_tower", "car_wreck", "campfire", "tent", "antenna", "bridge", "crater", "sign",
+    "vault_door", "billboard", "windmill", "gas_pump", "barrel", "fence", "shack",
+    "watch_tower", "train_car", "smokestack", "radar_dish", "barricade"
+  ]
+}

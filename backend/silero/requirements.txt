@@ -1,0 +1,6 @@
+# CPU-only torch: the +cpu local version exists only on the PyTorch index,
+# so pip cannot accidentally resolve the multi-GB CUDA build from PyPI.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.5.1+cpu
+# torch does not pull numpy as a dependency, but tensor->wav conversion needs it
+numpy

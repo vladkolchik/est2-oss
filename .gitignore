@@ -1,0 +1,38 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.vercel
+
+# Local Silero TTS runtime (venv + downloaded models)
+backend/.silero/
+
+# Music and UI sounds are third-party content: keep them local, see public/audio/README.md
+public/audio/*
+!public/audio/README.md
+
+# Secrets: env files stay local; only templates are committed
+.env
+.env.*
+!.env.example

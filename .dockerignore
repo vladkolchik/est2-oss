@@ -1,0 +1,19 @@
+# Keep the build context small and secrets out of images.
+.git
+.github
+**/node_modules
+dist
+**/.env
+**/.env.*
+!**/.env.example
+backend/.silero
+backend/silero
+tests
+**/*.log
+.vscode
+.idea
+.claude
+# Sounds are mounted at runtime (compose: ./public/audio -> /app/audio), never baked into images
+public/audio
+*.md
+!README.md

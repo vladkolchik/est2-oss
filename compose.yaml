@@ -1,0 +1,114 @@
+# EST2 deployment — the same file works with and without Coolify.
+#
+# Services
+#   app     frontend + API (Dockerfile, Node 24 LTS), applies DB migrations on start
+#   db      Postgres 17 + pgvector: world memory and GraphRAG (the core of the game)
+#   silero  optional self-hosted TTS, profile "tts"
+#
+# Without Coolify (any Docker host):
+#   cp backend/.env.example .env        # fill in POSTGRES_PASSWORD and at least one text key
+#   docker compose -f compose.yaml -f compose.standalone.yaml up -d --build
+#   # -> http://localhost:3000 (APP_PORT to change). Add Silero: COMPOSE_PROFILES=tts
+#
+# With Coolify: create a resource from this repo with build pack "Docker Compose"
+# (compose file: /compose.yaml), give the `app` service a domain (port 3000), and set the
+# variables below in the resource's Environment Variables. Don't add compose.standalone.yaml:
+# Traefik reaches `app` over the compose network, a published host port would bypass HTTPS.
+#
+# Values come from the environment / the .env file next to this file. Variables left empty
+# fall back to the backend defaults; see backend/.env.example for what each one does.
+
+name: est2
+
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    expose:
+      - "3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: "3000"
+      # World memory: the bundled db service. POSTGRES_PASSWORD must be URL-safe (e.g. hex).
+      DATABASE_URL: "postgres://est2:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/est2"
+      PG_POOL_MAX: "${PG_POOL_MAX:-}"
+      SESSIONS_ACCESS_KEY: "${SESSIONS_ACCESS_KEY:-}"
+      BYOK_REQUIRED: "${BYOK_REQUIRED:-false}"
+      # Text LLM
+      TEXT_PROVIDER: "${TEXT_PROVIDER:-deepseek}"
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-}"
+      DEEPSEEK_MODEL: "${DEEPSEEK_MODEL:-}"
+      DEEPSEEK_BASE_URL: "${DEEPSEEK_BASE_URL:-}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      GEMINI_IMAGE_MODEL: "${GEMINI_IMAGE_MODEL:-}"
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
+      OPENROUTER_MODEL: "${OPENROUTER_MODEL:-}"
+      OPENROUTER_LIGHT_MODEL: "${OPENROUTER_LIGHT_MODEL:-}"
+      OPENROUTER_EMBEDDING_MODEL: "${OPENROUTER_EMBEDDING_MODEL:-}"
+      OPENROUTER_IMAGE_MODEL: "${OPENROUTER_IMAGE_MODEL:-}"
+      OPENROUTER_TTS_MODEL: "${OPENROUTER_TTS_MODEL:-}"
+      ARTIST_PROVIDER: "${ARTIST_PROVIDER:-}"
+      ARTIST_MODEL: "${ARTIST_MODEL:-}"
+      # Embeddings (or leave to OpenRouter)
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      # GraphRAG
+      GRAPH_RAG_ENABLED: "${GRAPH_RAG_ENABLED:-true}"
+      GRAPH_RAG_TIMEOUT_MS: "${GRAPH_RAG_TIMEOUT_MS:-60000}"
+      GRAPH_RAG_COMPLEX_ONLY: "${GRAPH_RAG_COMPLEX_ONLY:-true}"
+      GRAPH_RAG_SUMMARY_MODEL: "${GRAPH_RAG_SUMMARY_MODEL:-}"
+      GRAPH_RAG_SUMMARY_PROVIDER: "${GRAPH_RAG_SUMMARY_PROVIDER:-}"
+      GRAPH_RAG_SUMMARY_TTL_TURNS: "${GRAPH_RAG_SUMMARY_TTL_TURNS:-6}"
+      GRAPH_RAG_MAX_SCOPES: "${GRAPH_RAG_MAX_SCOPES:-4}"
+      GRAPH_RAG_MAX_SUBGRAPH_NODES: "${GRAPH_RAG_MAX_SUBGRAPH_NODES:-80}"
+      GRAPH_RAG_MAX_SUBGRAPH_EDGES: "${GRAPH_RAG_MAX_SUBGRAPH_EDGES:-140}"
+      GRAPH_RAG_JOB_BATCH: "${GRAPH_RAG_JOB_BATCH:-12}"
+      GRAPH_RAG_CACHE_WARM_ON_TURN: "${GRAPH_RAG_CACHE_WARM_ON_TURN:-true}"
+      NPC_REFLECTION_EVERY_N_EVENTS: "${NPC_REFLECTION_EVERY_N_EVENTS:-}"
+      # TTS
+      ELEVENLABS_API_KEY: "${ELEVENLABS_API_KEY:-}"
+      GCP_TTS_API_KEY: "${GCP_TTS_API_KEY:-}"
+      # With profile "tts" set SILERO_TTS_URL=http://silero:3000/tts
+      SILERO_TTS_URL: "${SILERO_TTS_URL:-}"
+      SILERO_SPEAKER: "${SILERO_SPEAKER:-}"
+      # Music and UI sounds are not in the repo: drop your own files into public/audio/
+      # (names in public/audio/README.md). Missing files are skipped, the game runs silent.
+      AUDIO_DIR: /app/audio
+    volumes:
+      - ./public/audio:/app/audio:ro
+    mem_limit: 1g
+
+  db:
+    image: pgvector/pgvector:pg17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: est2
+      POSTGRES_USER: est2
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}"
+    volumes:
+      - est2-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U est2 -d est2"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 768m
+
+  silero:
+    profiles: ["tts"]
+    build: ./backend/silero
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      SILERO_MODEL: "${SILERO_MODEL:-v3_en}"
+      SILERO_SPEAKER: "${SILERO_SPEAKER:-en_0}"
+      SILERO_THREADS: "${SILERO_THREADS:-4}"
+    volumes:
+      - est2-silero-models:/models
+    mem_limit: 2g
+
+volumes:
+  est2-postgres:
+  est2-silero-models:

@@ -1,0 +1,32 @@
+{
+  "name": "est2",
+  "description": "EST2 — LLM-driven post-apocalyptic RPG with persistent world memory (GraphRAG)",
+  "license": "MIT",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "npm@11.3.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:smoke-world-memory": "node tests/smoke-world-memory.mjs",
+    "test:eval-memory-gate": "node tests/eval-memory-gate.mjs",
+    "test:release-gate": "node tests/release-gate.mjs"
+  },
+  "dependencies": {
+    "howler": "^2.2.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "google-auth-library": "^9.14.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "rollup": "^4.24.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  },
+  "engines": {
+    "node": ">=24.22.1"
+  }
+}

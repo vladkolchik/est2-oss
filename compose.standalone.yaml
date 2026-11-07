@@ -1,0 +1,8 @@
+# Without Coolify: publish the app on the host. Use together with compose.yaml:
+#   docker compose -f compose.yaml -f compose.standalone.yaml up -d --build
+# Binds to 127.0.0.1 by default; put a reverse proxy with HTTPS in front for public access,
+# or set APP_BIND=0.0.0.0 to expose it directly.
+services:
+  app:
+    ports:
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-3000}:3000"

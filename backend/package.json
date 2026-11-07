@@ -1,0 +1,24 @@
+{
+  "name": "est2-backend",
+  "version": "1.0.0",
+  "description": "Backend for EST2: game master, world memory and GraphRAG",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "openai": "^4.52.7",
+    "pg": "8.23.1"
+  },
+  "engines": {
+    "node": ">=24.22.1"
+  }
+}
