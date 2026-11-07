@@ -1,8 +1,8 @@
 # EST2 — LLM-driven Post-Apocalyptic RPG
 
-A text RPG in a retro-futuristic post-apocalyptic wasteland. An LLM game master narrates the world, and a persistent **world memory with GraphRAG** keeps it consistent: NPCs remember you, consequences come back, relations and quests survive across sessions. On top of that: generated scene images, narrated audio, and BYOK so players can bring their own API keys.
+A text RPG in a retro-futuristic post-apocalyptic wasteland, inspired by the Fallout game series. An LLM game master narrates the world, and a persistent **world memory with GraphRAG** keeps it consistent: NPCs remember you, consequences come back, relations and quests survive across sessions. On top of that: generated scene images, narrated audio, and BYOK so players can bring their own API keys.
 
-> EST2 is a non-commercial fan project inspired by the classic Fallout games. It is not affiliated with, endorsed or sponsored by Bethesda Softworks, ZeniMax Media or Microsoft. Fallout and related names are trademarks of their respective owners.
+> EST2 is a non-commercial fan project inspired by the Fallout game series. It is not affiliated with, endorsed or sponsored by Bethesda Softworks, ZeniMax Media or Microsoft. Fallout and related names are trademarks of their respective owners.
 
 ## Current Stack
 
@@ -107,7 +107,7 @@ Note: on some Windows setups, `npm run dev` can bind in a way that causes `ERR_C
 
 ## Audio
 
-Music and UI sounds are not part of the repository: the original assets were third-party content. Put your own files into `public/audio/` under the names listed in [`public/audio/README.md`](public/audio/README.md). Missing files are skipped and the game plays silently; narration (TTS) and the in-game radio work regardless. In Docker Compose the folder is mounted into the app container, so adding files needs no rebuild.
+Music and UI sounds are not part of the repository: the original assets were third-party content. Put your own files into `public/audio/` under the names listed in [`public/audio/README.md`](public/audio/README.md), which also names the tracks the game was originally scored with. Missing files are skipped and the game plays silently; narration (TTS) and the in-game radio work regardless. In Docker Compose the folder is mounted into the app container, so adding files needs no rebuild.
 
 The in-game radio plays public streams from [fallout.fm](https://fallout.fm), a third-party fan radio; EST2 only links to them.
 
